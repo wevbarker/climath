@@ -5,11 +5,5 @@
 <<xAct`xPlain`;
 Print@"Hello World";
 Comment@"Hello World its me again"; 
-Comment@"Hello World";
-Comment@"Hello World";
-Comment@"Hello World";
-Comment@"Hello World";
-Comment@"Hello World";
-Comment@"Hello World";
-Comment@"Hello World";
+Comment@"Here I have a comment";
 Quit[];
