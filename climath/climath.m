@@ -57,6 +57,7 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 	SelectionMove[$TargetNotebookObject,Next,Cell];
 	Pause@$DeletePauseTime;
 	NotebookDelete[$TargetNotebookObject];
+	SelectionMove[$TargetNotebookObject,After,Notebook];
 	Comment@"Script executed.";
 ];
 
