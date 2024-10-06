@@ -15,19 +15,26 @@ Douse::usage="Douse[]";
 Burn::usage="Burn[Expr_String]";
 Smother::usage="Smother[]";
 
+(*====================*)
+(*  Global variables  *)
+(*====================*)
+
+$NonInteractive::usage="$NonInteractive";
+
 Begin["climath`Private`"];
 
 (*====================*)
 (*  Global variables  *)
 (*====================*)
 
+$NonInteractive=False;
 $TargetKernelName="climath";
 $FrontEndLaunchCommand = "/usr/local/bin/mathematica -mathlink -linkmode launch -linkname 'math -mathlink'";
 $DeletePauseTime=10;
 
-(*=================*)
+(*==================*)
 (*  Implementation  *)
-(*=================*)
+(*==================*)
 
 Ignite[]:=Module[{$FrontEndConnected},
 	Comment@"Igniting the FrontEnd...";
@@ -53,11 +60,23 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 	$TargetNotebookObject~NotebookWrite~(ToBoxes@(Defer@Get@FullFileName/.OwnValues@FullFileName));
 	SelectionMove[$TargetNotebookObject,All,Notebook];
 	SelectionEvaluate@$TargetNotebookObject;
+<<<<<<< HEAD
 	SelectionMove[$TargetNotebookObject,Before,Notebook];
 	SelectionMove[$TargetNotebookObject,Next,Cell];
 	Pause@$DeletePauseTime;
 	NotebookDelete[$TargetNotebookObject];
 	SelectionMove[$TargetNotebookObject,After,Notebook];
+=======
+	If[$NonInteractive,
+		While[(FileExistsQ@(FullFileName~StringReplace~{".m"->".nb"})),Pause@1];
+	,
+		SelectionMove[$TargetNotebookObject,Before,Notebook];
+		SelectionMove[$TargetNotebookObject,Next,Cell];
+		Pause@$DeletePauseTime;
+		NotebookDelete[$TargetNotebookObject];
+		SelectionMove[$TargetNotebookObject,After,Notebook];
+	];
+>>>>>>> 9a40bf1965172950e139e3a8263d4807397a00af
 	Comment@"Script executed.";
 ];
 
