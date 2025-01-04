@@ -4,6 +4,6 @@
 #  This file is a local installer  #
 #==================================#
 
-rsync -avh --force ./climath ~/.Mathematica/Applications/ --delete
+rsync -avh --force ./climath ~/.Wolfram/Applications/ --delete
 
 exit 0
