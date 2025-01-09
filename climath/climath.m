@@ -29,7 +29,7 @@ Begin["climath`Private`"];
 
 $NonInteractive=False;
 $TargetKernelName="climath";
-$FrontEndLaunchCommand = "/usr/local/bin/mathematica -mathlink -linkmode launch -linkname 'math -mathlink'";
+$FrontEndLaunchCommand = "/usr/local/bin/wolframnb -mathlink -linkmode launch -linkname 'math -mathlink'";
 $DeletePauseTime=10;
 
 (*==================*)
@@ -41,6 +41,7 @@ Ignite[]:=Module[{$FrontEndConnected},
 	$FrontEndConnected=ConnectToFrontEnd[];
 	If[$FrontEndConnected,Comment@"FrontEnd ignited.";,
 		Comment@"FrontEnd not ignited.";Abort[]];
+(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[];*)
 	$TargetNotebookObject=UsingFrontEnd@CreateNotebook[Evaluator->$TargetKernelName];
 ];
 
@@ -60,13 +61,6 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 	$TargetNotebookObject~NotebookWrite~(ToBoxes@(Defer@Get@FullFileName/.OwnValues@FullFileName));
 	SelectionMove[$TargetNotebookObject,All,Notebook];
 	SelectionEvaluate@$TargetNotebookObject;
-<<<<<<< HEAD
-	SelectionMove[$TargetNotebookObject,Before,Notebook];
-	SelectionMove[$TargetNotebookObject,Next,Cell];
-	Pause@$DeletePauseTime;
-	NotebookDelete[$TargetNotebookObject];
-	SelectionMove[$TargetNotebookObject,After,Notebook];
-=======
 	If[$NonInteractive,
 		While[(FileExistsQ@(FullFileName~StringReplace~{".m"->".nb"})),Pause@1];
 	,
@@ -76,7 +70,6 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 		NotebookDelete[$TargetNotebookObject];
 		SelectionMove[$TargetNotebookObject,After,Notebook];
 	];
->>>>>>> 9a40bf1965172950e139e3a8263d4807397a00af
 	Comment@"Script executed.";
 ];
 
