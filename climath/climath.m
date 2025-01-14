@@ -14,6 +14,7 @@ Ignite::usage="Ignite[]";
 Douse::usage="Douse[]";
 Burn::usage="Burn[Expr_String]";
 Smother::usage="Smother[]";
+VimJ::usage="VimJ[]";
 
 (*====================*)
 (*  Global variables  *)
@@ -41,8 +42,13 @@ Ignite[]:=Module[{$FrontEndConnected},
 	$FrontEndConnected=ConnectToFrontEnd[];
 	If[$FrontEndConnected,Comment@"FrontEnd ignited.";,
 		Comment@"FrontEnd not ignited.";Abort[]];
-(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[];*)
-	$TargetNotebookObject=UsingFrontEnd@CreateNotebook[Evaluator->$TargetKernelName];
+	(*The use of the climath kernel name began to cause problems in 14.1*)
+	$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{}];
+	(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[Evaluator->$TargetKernelName];*)
+	UsingFrontEnd@SetOptions[$FrontEndSession,Background->xAct`xPlain`Private`$NBlack];
+	UsingFrontEnd@SetOptions[$FrontEndSession,FontColor->xAct`xPlain`Private`$NWhite];
+	UsingFrontEnd@(CurrentValue[$FrontEnd,WindowToolbars]={});
+	UsingFrontEnd@SetOptions[$FrontEnd,IgnoreSpellCheck->True];
 ];
 
 Douse[]:=UsingFrontEnd@NotebookClose@$TargetNotebookObject;
@@ -69,11 +75,15 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 		Pause@$DeletePauseTime;
 		NotebookDelete[$TargetNotebookObject];
 		SelectionMove[$TargetNotebookObject,After,Notebook];
+		SelectionMove[$TargetNotebookObject,Previous,Cell];
 	];
 	Comment@"Script executed.";
 ];
 
 Smother[]:=UsingFrontEnd@FrontEndExecute@FrontEndToken@"EvaluatorAbort";
+
+VimJ[]:=UsingFrontEnd@SelectionMove[$TargetNotebookObject,Next,Cell];
+(*VimJ[]:=UsingFrontEnd@SelectionMove[$TargetNotebookObject,Next,Cell,5,AutoScroll->True];*)
 
 End[];
 EndPackage[];
