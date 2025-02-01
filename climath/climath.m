@@ -30,6 +30,7 @@ Begin["climath`Private`"];
 
 $NonInteractive=False;
 $TargetKernelName="climath";
+(*$FrontEndLaunchCommand = "/usr/local/bin/wolframnb";*)
 $FrontEndLaunchCommand = "/usr/local/bin/wolframnb -mathlink -linkmode launch -linkname 'math -mathlink'";
 $DeletePauseTime=10;
 
@@ -45,15 +46,15 @@ Ignite[]:=Module[{$FrontEndConnected},
 	(*The use of the climath kernel name began to cause problems in 14.1*)
 	$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{}];
 	(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[Evaluator->$TargetKernelName];*)
-	UsingFrontEnd@SetOptions[$FrontEndSession,Background->xAct`xPlain`Private`$NBlack];
-	UsingFrontEnd@SetOptions[$FrontEndSession,FontColor->xAct`xPlain`Private`$NWhite];
+	UsingFrontEnd@SetOptions[$TargetNotebookObject,Background->xAct`xPlain`Private`$NBlack];
+	UsingFrontEnd@SetOptions[$TargetNotebookObject,FontColor->xAct`xPlain`Private`$NWhite];
 	UsingFrontEnd@(CurrentValue[$FrontEnd,WindowToolbars]={});
 	UsingFrontEnd@SetOptions[$FrontEnd,IgnoreSpellCheck->True];
 ];
 
 Douse[]:=UsingFrontEnd@NotebookClose@$TargetNotebookObject;
 
-Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
+Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},	
 	FullFileName=FileNameJoin@{Directory[],FileName};
 	Comment@("Running the script at "<>FullFileName<>"...");
 	$TargetNotebookObject~NotebookSave~(FullFileName~StringReplace~{".m"->".nb"});
