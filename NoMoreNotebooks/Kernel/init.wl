@@ -2,4 +2,4 @@
 (*  Load the package  *)
 (*====================*)
 
-Get@"climath/climath.m";
+Get@"NoMoreNotebooks/NoMoreNotebooks.m";

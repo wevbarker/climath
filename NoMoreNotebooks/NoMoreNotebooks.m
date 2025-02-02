@@ -1,10 +1,10 @@
-(*===========*)
-(*  climath  *)
-(*===========*)
+(*===================*)
+(*  NoMoreNotebooks  *)
+(*===================*)
 
-BeginPackage["climath`",{"JLink`","xAct`xPlain`"}];
-xAct`climath`Private`$InstallDirectory=Select[FileNameJoin[{#,"climath"}]&/@$Path,DirectoryQ][[1]];
-Run@("echo -e $(cat "<>FileNameJoin@{xAct`climath`Private`$InstallDirectory,"Logo.txt"}<>")");
+BeginPackage["NoMoreNotebooks`",{"JLink`"}];
+xAct`NoMoreNotebooks`Private`$InstallDirectory=Select[FileNameJoin[{#,"NoMoreNotebooks"}]&/@$Path,DirectoryQ][[1]];
+Run@("echo -e $(cat "<>FileNameJoin@{xAct`NoMoreNotebooks`Private`$InstallDirectory,"Logo.txt"}<>")");
 
 (*========================================*)
 (*  Declaration of functions and options  *)
@@ -22,32 +22,42 @@ VimJ::usage="VimJ[]";
 
 $NonInteractive::usage="$NonInteractive";
 
-Begin["climath`Private`"];
+Begin["NoMoreNotebooks`Private`"];
 
 (*====================*)
 (*  Global variables  *)
 (*====================*)
 
 $NonInteractive=False;
-$TargetKernelName="climath";
-(*$FrontEndLaunchCommand = "/usr/local/bin/wolframnb";*)
-$FrontEndLaunchCommand = "/usr/local/bin/wolframnb -mathlink -linkmode launch -linkname 'math -mathlink'";
+$TargetKernelName="NoMoreNotebooks";
+If[$VersionNumber<=14,
+	$FrontEndLaunchCommand="/usr/local/bin/mathematica -mathlink -linkmode launch -linkname 'math -mathlink'";,
+	$FrontEndLaunchCommand="/usr/local/bin/wolframnb -mathlink -linkmode launch -linkname 'math -mathlink'";
+];
 $DeletePauseTime=10;
 
 (*==================*)
 (*  Implementation  *)
 (*==================*)
 
+ShowStatus[Expr_?StringQ]:=Module[{},	
+	Run@("echo -e \"\\e[1;34;42m NoMoreNotebooks: \\e[1;30;42m"<>Expr<>" \\e[0m\"");
+];
+
 Ignite[]:=Module[{$FrontEndConnected},
-	Comment@"Igniting the FrontEnd...";
+	ShowStatus@"Connecting the FrontEnd...";
 	$FrontEndConnected=ConnectToFrontEnd[];
-	If[$FrontEndConnected,Comment@"FrontEnd ignited.";,
-		Comment@"FrontEnd not ignited.";Abort[]];
-	(*The use of the climath kernel name began to cause problems in 14.1*)
-	$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{}];
-	(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[Evaluator->$TargetKernelName];*)
-	UsingFrontEnd@SetOptions[$TargetNotebookObject,Background->xAct`xPlain`Private`$NBlack];
-	UsingFrontEnd@SetOptions[$TargetNotebookObject,FontColor->xAct`xPlain`Private`$NWhite];
+	If[$FrontEndConnected,ShowStatus@"FrontEnd connected.";,
+		ShowStatus@"FrontEnd not connected.";Abort[]
+	];
+	If[$VersionNumber<=14,
+		$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{}];,
+		(*This stopped working when we switched to Arch, so it needs further investigation*)
+		(*$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{},Evaluator->$TargetKernelName];,*)
+		$TargetNotebookObject=UsingFrontEnd@CreateNotebook[WindowElements->{}];
+	];
+	UsingFrontEnd@SetOptions[$TargetNotebookObject,Background->RGBColor@"#07242c"];
+	UsingFrontEnd@SetOptions[$TargetNotebookObject,FontColor->RGBColor@"#c4c7c7"];
 	UsingFrontEnd@(CurrentValue[$FrontEnd,WindowToolbars]={});
 	UsingFrontEnd@SetOptions[$FrontEnd,IgnoreSpellCheck->True];
 ];
@@ -56,7 +66,7 @@ Douse[]:=UsingFrontEnd@NotebookClose@$TargetNotebookObject;
 
 Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},	
 	FullFileName=FileNameJoin@{Directory[],FileName};
-	Comment@("Running the script at "<>FullFileName<>"...");
+	ShowStatus@("Running "<>FullFileName<>"...");
 	$TargetNotebookObject~NotebookSave~(FullFileName~StringReplace~{".m"->".nb"});
 	SelectionMove[$TargetNotebookObject,All,Notebook];
 	NotebookDelete@$TargetNotebookObject;
@@ -78,7 +88,7 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 		SelectionMove[$TargetNotebookObject,After,Notebook];
 		SelectionMove[$TargetNotebookObject,Previous,Cell];
 	];
-	Comment@"Script executed.";
+	ShowStatus@"Run complete.";
 ];
 
 Smother[]:=UsingFrontEnd@FrontEndExecute@FrontEndToken@"EvaluatorAbort";
