@@ -14,6 +14,7 @@ Ignite::usage="Ignite[]";
 Douse::usage="Douse[]";
 Burn::usage="Burn[Expr_String]";
 Smother::usage="Smother[]";
+Singe::usage="Singe[]";
 VimJ::usage="VimJ[]";
 
 (*====================*)
@@ -92,6 +93,13 @@ Burn[FileName_]:=UsingFrontEnd@Module[{FullFileName},
 ];
 
 Smother[]:=UsingFrontEnd@FrontEndExecute@FrontEndToken@"EvaluatorAbort";
+
+(*This prints the notebook to an output file*)
+Singe[FileName_]:=UsingFrontEnd@Module[{FullFileName},	
+	FullFileName=FileNameJoin@{Directory[],FileName};
+	ShowStatus@("Saving "<>FullFileName<>"...");
+	$TargetNotebookObject~NotebookPrint~FullFileName;
+];
 
 VimJ[]:=UsingFrontEnd@SelectionMove[$TargetNotebookObject,Next,Cell];
 (*VimJ[]:=UsingFrontEnd@SelectionMove[$TargetNotebookObject,Next,Cell,5,AutoScroll->True];*)
