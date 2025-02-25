@@ -61,6 +61,7 @@ Ignite[]:=Module[{$FrontEndConnected},
 	UsingFrontEnd@SetOptions[$TargetNotebookObject,FontColor->RGBColor@"#c4c7c7"];
 	UsingFrontEnd@(CurrentValue[$FrontEnd,WindowToolbars]={});
 	UsingFrontEnd@SetOptions[$FrontEnd,IgnoreSpellCheck->True];
+
 ];
 
 Douse[]:=UsingFrontEnd@NotebookClose@$TargetNotebookObject;
